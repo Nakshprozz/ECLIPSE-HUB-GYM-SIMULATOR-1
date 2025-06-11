@@ -1,0 +1,175 @@
+ocal Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "ECLIPSE HUB",
+    SubTitle = "Gym Simulator Made By NKDev",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(480, 380),
+    Acrylic = true,
+    Theme = "Darker",
+    MinimizeKey = Enum.KeyCode.LeftShift
+})
+
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "home" }),
+    Buy = Window:AddTab({ Title = "Buy", Icon = "shopping-bag" }),
+}
+
+-- Auto Lift Toggle
+local autoLiftToggle = Tabs.Main:AddToggle("AutoLift", {
+    Title = "Auto Lift",
+    Description = "It makes infinite pull-ups happen.",
+    Default = false
+})
+
+local liftConnection
+
+autoLiftToggle:OnChanged(function(state)
+    if state then
+        liftConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Msg"):WaitForChild("Click"):FireServer()
+            end)
+        end)
+    else
+        if liftConnection then
+            liftConnection:Disconnect()
+            liftConnection = nil
+        end
+    end
+end)
+
+-- Auto Do Back Toggle
+local autoBackToggle = Tabs.Main:AddToggle("AutoBack", {
+    Title = "Auto Do Back",
+    Description = "Auto Grows Back Strength",
+    Default = false
+})
+
+local backConnection
+
+autoBackToggle:OnChanged(function(state)
+    if state then
+        backConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Msg"):WaitForChild("Click"):FireServer()
+            end)
+        end)
+    else
+        if backConnection then
+            backConnection:Disconnect()
+            backConnection = nil
+        end
+    end
+end)
+
+-- Auto Legs Toggle
+local autoLegsToggle = Tabs.Main:AddToggle("AutoLegs", {
+    Title = "Auto Legs",
+    Description = "Auto trains your legs infinitely.",
+    Default = false
+})
+
+local legsConnection
+
+autoLegsToggle:OnChanged(function(state)
+    if state then
+        legsConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Msg"):WaitForChild("Click"):FireServer()
+            end)
+        end)
+    else
+        if legsConnection then
+            legsConnection:Disconnect()
+            legsConnection = nil
+        end
+    end
+end)
+
+-- Auto Arms Toggle
+local autoArmsToggle = Tabs.Main:AddToggle("AutoArms", {
+    Title = "Auto Arms",
+    Description = "Auto trains your arms infinitely.",
+    Default = false
+})
+
+local armsConnection
+
+autoArmsToggle:OnChanged(function(state)
+    if state then
+        armsConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("Msg"):WaitForChild("Click"):FireServer()
+            end)
+        end)
+    else
+        if armsConnection then
+            armsConnection:Disconnect()
+            armsConnection = nil
+        end
+    end
+end)
+
+-- Buy 300 Money Pet Toggle (INFINITE)
+local buyPetToggle = Tabs.Buy:AddToggle("BuyPet", {
+    Title = "Buy 300 Money Pet",
+    Description = "Auto buys the 300 money pet infinitely.",
+    Default = false
+})
+
+local buyingPet = false
+
+buyPetToggle:OnChanged(function(state)
+    buyingPet = state
+    if state then
+        task.spawn(function()
+            while buyingPet do
+                pcall(function()
+                    local args = { 7000001, 1 }
+                    game:GetService("ReplicatedStorage")
+                        :WaitForChild("Tool")
+                        :WaitForChild("DrawUp")
+                        :WaitForChild("Msg")
+                        :WaitForChild("DrawHero")
+                        :InvokeServer(unpack(args))
+                end)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+-- Floating "Open UI" button
+local CoreGui = game:GetService("CoreGui")
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "FluentRestoreButton"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local openButton = Instance.new("TextButton")
+openButton.Size = UDim2.new(0, 120, 0, 30)
+openButton.Position = UDim2.new(0, 20, 0, 20)
+openButton.Text = "Open ECLIPSE HUB"
+openButton.Visible = false
+openButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+openButton.BorderSizePixel = 0
+openButton.Parent = ScreenGui
+
+-- Minimize + Restore Logic
+local isMinimized = false
+
+Window:Minimized(function(minimized)
+    isMinimized = minimized
+    openButton.Visible = minimized
+end)
+
+openButton.MouseButton1Click:Connect(function()
+    if isMinimized then
+        Window:Minimize(false)
+        openButton.Visible = false
+    end
+end)
+
+Window:SelectTab(1)
