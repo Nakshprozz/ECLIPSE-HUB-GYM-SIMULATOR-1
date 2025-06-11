@@ -1,4 +1,4 @@
-ocal Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 local Window = Fluent:CreateWindow({
     Title = "ECLIPSE HUB",
@@ -15,15 +15,17 @@ local Tabs = {
     Buy = Window:AddTab({ Title = "Buy", Icon = "shopping-bag" }),
 }
 
--- Auto Lift Toggle
-local autoLiftToggle = Tabs.Main:AddToggle("AutoLift", {
+-- Scrollable Groups
+local mainGroup = Tabs.Main:AddSection("Main Options", { Scrollable = true })
+local buyGroup = Tabs.Buy:AddSection("Pet Options", { Scrollable = true })
+
+-- Auto Lift
+local liftConnection
+local autoLiftToggle = mainGroup:AddToggle("AutoLift", {
     Title = "Auto Lift",
     Description = "It makes infinite pull-ups happen.",
     Default = false
 })
-
-local liftConnection
-
 autoLiftToggle:OnChanged(function(state)
     if state then
         liftConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -32,22 +34,17 @@ autoLiftToggle:OnChanged(function(state)
             end)
         end)
     else
-        if liftConnection then
-            liftConnection:Disconnect()
-            liftConnection = nil
-        end
+        if liftConnection then liftConnection:Disconnect(); liftConnection = nil end
     end
 end)
 
--- Auto Do Back Toggle
-local autoBackToggle = Tabs.Main:AddToggle("AutoBack", {
+-- Auto Back
+local backConnection
+local autoBackToggle = mainGroup:AddToggle("AutoBack", {
     Title = "Auto Do Back",
     Description = "Auto Grows Back Strength",
     Default = false
 })
-
-local backConnection
-
 autoBackToggle:OnChanged(function(state)
     if state then
         backConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -56,22 +53,17 @@ autoBackToggle:OnChanged(function(state)
             end)
         end)
     else
-        if backConnection then
-            backConnection:Disconnect()
-            backConnection = nil
-        end
+        if backConnection then backConnection:Disconnect(); backConnection = nil end
     end
 end)
 
--- Auto Legs Toggle
-local autoLegsToggle = Tabs.Main:AddToggle("AutoLegs", {
+-- Auto Legs
+local legsConnection
+local autoLegsToggle = mainGroup:AddToggle("AutoLegs", {
     Title = "Auto Legs",
     Description = "Auto trains your legs infinitely.",
     Default = false
 })
-
-local legsConnection
-
 autoLegsToggle:OnChanged(function(state)
     if state then
         legsConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -80,22 +72,17 @@ autoLegsToggle:OnChanged(function(state)
             end)
         end)
     else
-        if legsConnection then
-            legsConnection:Disconnect()
-            legsConnection = nil
-        end
+        if legsConnection then legsConnection:Disconnect(); legsConnection = nil end
     end
 end)
 
--- Auto Arms Toggle
-local autoArmsToggle = Tabs.Main:AddToggle("AutoArms", {
+-- Auto Arms
+local armsConnection
+local autoArmsToggle = mainGroup:AddToggle("AutoArms", {
     Title = "Auto Arms",
     Description = "Auto trains your arms infinitely.",
     Default = false
 })
-
-local armsConnection
-
 autoArmsToggle:OnChanged(function(state)
     if state then
         armsConnection = game:GetService("RunService").Heartbeat:Connect(function()
@@ -104,22 +91,17 @@ autoArmsToggle:OnChanged(function(state)
             end)
         end)
     else
-        if armsConnection then
-            armsConnection:Disconnect()
-            armsConnection = nil
-        end
+        if armsConnection then armsConnection:Disconnect(); armsConnection = nil end
     end
 end)
 
--- Buy 300 Money Pet Toggle (INFINITE)
-local buyPetToggle = Tabs.Buy:AddToggle("BuyPet", {
+-- Auto Buy Pet
+local buyingPet = false
+local buyPetToggle = buyGroup:AddToggle("BuyPet", {
     Title = "Buy 300 Money Pet",
     Description = "Auto buys the 300 money pet infinitely.",
     Default = false
 })
-
-local buyingPet = false
-
 buyPetToggle:OnChanged(function(state)
     buyingPet = state
     if state then
@@ -140,12 +122,12 @@ buyPetToggle:OnChanged(function(state)
     end
 end)
 
--- Floating "Open UI" button
-local CoreGui = game:GetService("CoreGui")
+-- Minimize + Restore Button
+local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "FluentRestoreButton"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = CoreGui
+ScreenGui.Parent = PlayerGui
 
 local openButton = Instance.new("TextButton")
 openButton.Size = UDim2.new(0, 120, 0, 30)
@@ -157,9 +139,7 @@ openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 openButton.BorderSizePixel = 0
 openButton.Parent = ScreenGui
 
--- Minimize + Restore Logic
 local isMinimized = false
-
 Window:Minimized(function(minimized)
     isMinimized = minimized
     openButton.Visible = minimized
